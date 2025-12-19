@@ -18,5 +18,20 @@
   "bugs": {
     "url": "https://github.com/cdmstr-kev/news-explorer-backend/issues"
   },
-  "homepage": "https://github.com/cdmstr-kev/news-explorer-backend#readme"
+  "homepage": "https://github.com/cdmstr-kev/news-explorer-backend#readme",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.2.1",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.0.2",
+    "validator": "^13.15.26",
+    "winston": "^3.19.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.39.2",
+    "nodemon": "^3.1.11"
+  }
 }
