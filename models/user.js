@@ -30,20 +30,14 @@ const userSchema =  new mongoose.Schema( {
 
 })
 
-userSchema.pre("save", function(next) {
+userSchema.pre("save", async function() {
   if (!this.isModified("password")) {
-    return next();
+    return
   }
-
-  return bcrypt.hash(this.password, 10)
-    .then((hash) => {
-      this.password = hash;
-      next();
-    })
-    .catch(next);
+  this.password = await bcrypt.hash(this.password, 10)
 })
 
-userSchema.statics.findByCredentials = function findUserByCredentials(
+userSchema.statics.findUserByCredentials = function findUserByCredentials(
   email,
   password
 ) {
