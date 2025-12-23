@@ -24,17 +24,17 @@ const getCurrentUser = async (req, res, next) => {
 
 const createUser = async (req, res, next) => {
   try {
+    console.log("📝 Signup request body:", req.body);
     const { email, password, username } = req.body;
     const user = await User.create({ email, password, username });
     const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: "7d" });
     const userObject = user.toObject();
     delete userObject.password;
     return res.status(201).json({
-      token,
+      message: "User created successfully!",
       user: userObject,
     });
   } catch (err) {
-    console.error(err);
     if (err.name === "ValidationError") {
       next(new BadRequestError(err.message));
     } else if (err.code === 11000) {
