@@ -6,7 +6,9 @@ const ForbiddenError = require("../utils/forbiddenError");
 
 const getArticles = async (req, res, next) => {
   try {
-    const articles = await Article.find({ owner: req.user._id });
+    const articles = await Article.find({ owner: req.user._id }).sort({
+      _id: -1,
+    });
 
     res.status(SUCCESSFUL).json(articles);
   } catch (err) {
