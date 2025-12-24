@@ -4,21 +4,20 @@ const { JWT_SECRET } = require("../utils/config");
 const BadRequestError = require("../utils/badRequestError");
 const NotFoundError = require("../utils/notFoundError");
 const ConflictError = require("../utils/conflictError");
-const { SUCCESSFUL, CREATED } = require("../utils/success");
+const { SUCCESSFUL } = require("../utils/success");
 
 const getCurrentUser = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id).orFail(
       () => new NotFoundError("User not found")
     );
-    res.status(SUCCESSFUL).json(user);
+    return res.status(SUCCESSFUL).json(user);
   } catch (err) {
     console.log(err);
     if (err.name === "CastError") {
-      next(new BadRequestError("Invalid user ID"));
-    } else {
-      next(err);
+      return next(new BadRequestError("Invalid user ID"));
     }
+    return next(err);
   }
 };
 
@@ -27,7 +26,6 @@ const createUser = async (req, res, next) => {
     console.log("📝 Signup request body:", req.body);
     const { email, password, username } = req.body;
     const user = await User.create({ email, password, username });
-    const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: "7d" });
     const userObject = user.toObject();
     delete userObject.password;
     return res.status(201).json({
@@ -36,12 +34,12 @@ const createUser = async (req, res, next) => {
     });
   } catch (err) {
     if (err.name === "ValidationError") {
-      next(new BadRequestError(err.message));
-    } else if (err.code === 11000) {
-      next(new ConflictError("Email already exists"));
-    } else {
-      next(err);
+      return next(new BadRequestError(err.message));
     }
+    if (err.code === 11000) {
+      return next(new ConflictError("Email already exists"));
+    }
+    return next(err);
   }
 };
 
@@ -55,14 +53,13 @@ const login = async (req, res, next) => {
     const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
       expiresIn: "7d",
     });
-    res.status(SUCCESSFUL).json({ token });
+    return res.status(SUCCESSFUL).json({ token });
   } catch (err) {
     console.error(err);
     if (err.message === "Incorrect email or password") {
-      next(new BadRequestError("incorrect email or password"));
-    } else {
-      next(err);
+      return next(new BadRequestError("incorrect email or password"));
     }
+    return next(err);
   }
 };
 

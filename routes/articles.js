@@ -1,5 +1,5 @@
-const articles = require("../controllers/articles");
 const express = require("express");
+const articles = require("../controllers/articles");
 const auth = require("../middlewares/auth");
 const {
   validateArticleCreation,
