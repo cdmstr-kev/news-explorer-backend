@@ -16,7 +16,29 @@ const { PORT = 3001 } = process.env;
 const { DATABASE_URL } = process.env;
 
 app.use(helmet());
-app.use(cors());
+
+// CORS configuration
+const allowedOrigins = [
+  "http://localhost:5173", // Local development
+  "https://newsexplorer.cdmstr.com", // Production frontend
+  "https://www.newsexplorer.cdmstr.com", // Production frontend with www
+];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (mobile apps, Postman, etc.)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) !== -1 || !process.env.NODE_ENV === "production") {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 app.use(requestLogger);
 app.use(limiter);
