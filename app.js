@@ -55,7 +55,7 @@ mongoose
   .then(() => {
     app.listen(PORT, () => {});
   })
-  .catch(() => {
+  .catch((err) => {
     console.error("❌  DB error:", err);
     process.exit(1);
   });

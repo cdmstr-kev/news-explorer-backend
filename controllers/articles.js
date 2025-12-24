@@ -10,9 +10,9 @@ const getArticles = async (req, res, next) => {
       _id: -1,
     });
 
-    res.status(SUCCESSFUL).json(articles);
+    return res.status(SUCCESSFUL).json(articles);
   } catch (err) {
-    next(err);
+    return next(err);
   }
 };
 
@@ -29,13 +29,12 @@ const createArticle = async (req, res, next) => {
       image,
       owner: req.user._id,
     });
-    res.status(CREATED).json(article);
+    return res.status(CREATED).json(article);
   } catch (err) {
     if (err.name === "ValidationError") {
-      next(new BadRequestError(err.message));
-    } else {
-      next(err);
+      return next(new BadRequestError(err.message));
     }
+    return next(err);
   }
 };
 
@@ -46,18 +45,17 @@ const deleteArticle = async (req, res, next) => {
       () => new NotFoundError("Article not found")
     );
 
-    if (article.owner.toString() !== req.user._id) {
-      throw new ForbiddenError("You cannot delete this article!");
+    if (article.owner.toString() !== req.user._id.toString()) {
+      return next(new ForbiddenError("You cannot delete this article!"));
     }
     await article.deleteOne();
 
-    res.status(SUCCESSFUL).json({ message: "Article deleted successfully!" });
+    return res.status(SUCCESSFUL).json({ message: "Article deleted successfully!" });
   } catch (err) {
     if (err.name === "CastError") {
-      next(new BadRequestError("invalid article ID"));
-    } else {
-      next(err);
+      return next(new BadRequestError("invalid article ID"));
     }
+    return next(err);
   }
 };
 
