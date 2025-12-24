@@ -44,7 +44,7 @@ RESTful API backend for the News Explorer application. Handles user authenticati
   npm install
 
   3. Create a .env file in the root directory:
-  PORT=3001
+  PORT=3000
   DATABASE_URL=mongodb://localhost:27017/news-explorer
   JWT_SECRET=your-secret-key-here
   NODE_ENV=development
@@ -57,15 +57,15 @@ RESTful API backend for the News Explorer application. Handles user authenticati
   mongod
 
   5. Start the development server:
-  npm start
+  npm run dev
 
-  The server will run on http://localhost:3001
+  The server will run on http://localhost:3000
 
   Environment Variables
 
   | Variable     | Description                        | Example                                 |
   |--------------|------------------------------------|-----------------------------------------|
-  | PORT         | Server port                        | 3001                                    |
+  | PORT         | Server port                        | 3000                                    |
   | DATABASE_URL | MongoDB connection string          | mongodb://localhost:27017/news-explorer |
   | JWT_SECRET   | Secret key for JWT signing         | your-secret-key                         |
   | NODE_ENV     | Environment mode                   | development or production               |
@@ -77,7 +77,7 @@ RESTful API backend for the News Explorer application. Handles user authenticati
 
   Register User
 
-  POST /users/signup
+  POST /signup
   Content-Type: application/json
 
   {
@@ -88,7 +88,7 @@ RESTful API backend for the News Explorer application. Handles user authenticati
 
   Response (201):
   {
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "message": "User created successfully!",
     "user": {
       "_id": "507f1f77bcf86cd799439011",
       "email": "user@example.com",
@@ -104,7 +104,7 @@ RESTful API backend for the News Explorer application. Handles user authenticati
   ---
   Login User
 
-  POST /users/signin
+  POST /signin
   Content-Type: application/json
 
   {
@@ -284,6 +284,7 @@ RESTful API backend for the News Explorer application. Handles user authenticati
   │   └── users.js         # User auth logic
   ├── middlewares/
   │   ├── auth.js          # JWT authentication
+  │   ├── errorHandler.js  # Centralized error handling
   │   ├── logger.js        # Request/error logging
   │   ├── rateLimiter.js   # Rate limiting
   │   └── validation.js    # Request validation
@@ -291,6 +292,7 @@ RESTful API backend for the News Explorer application. Handles user authenticati
   │   ├── article.js       # Article schema
   │   └── user.js          # User schema
   ├── routes/
+  │   ├── index.js         # Main routes entry point
   │   ├── articles.js      # Article routes
   │   └── users.js         # User routes
   ├── utils/
@@ -378,17 +380,17 @@ RESTful API backend for the News Explorer application. Handles user authenticati
   Or test manually:
 
   # Register a user
-  curl -X POST http://localhost:3001/users/signup \
+  curl -X POST http://localhost:3000/signup \
     -H "Content-Type: application/json" \
     -d '{"email":"test@example.com","password":"password123","username":"TestUser"}'
 
   # Login
-  curl -X POST http://localhost:3001/users/signin \
+  curl -X POST http://localhost:3000/signin \
     -H "Content-Type: application/json" \
     -d '{"email":"test@example.com","password":"password123"}'
 
   # Get current user (replace TOKEN with your JWT)
-  curl http://localhost:3001/users/me \
+  curl http://localhost:3000/users/me \
     -H "Authorization: Bearer TOKEN"
 
   Development
@@ -422,9 +424,18 @@ RESTful API backend for the News Explorer application. Handles user authenticati
   Environment Variables for Production
 
   NODE_ENV=production
-  PORT=3001
+  PORT=3000
   DATABASE_URL=mongodb+srv://user:pass@cluster.mongodb.net/news-explorer
   JWT_SECRET=<generated-secret-key>
+
+  Live Deployment
+
+  - **Production API**: https://api.newsexplorer.cdmstr.com
+  - **Frontend URL**: https://newsexplorer.cdmstr.com
+  - **Platform**: Google Cloud Platform
+  - **Process Manager**: PM2
+  - **Web Server**: Nginx (reverse proxy)
+  - **SSL**: Let's Encrypt (Certbot)
 
   License
 
