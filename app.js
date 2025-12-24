@@ -5,14 +5,14 @@ const helmet = require("helmet");
 const { errors } = require("celebrate");
 const cors = require("cors");
 const limiter = require("./middlewares/rateLimiter");
-const userRouter = require("./routes/users");
-const articlesRouter = require("./routes/articles");
+const routes = require("./routes");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
+const errorHandler = require("./middlewares/errorHandler");
 
 dotenv.config();
 
 const app = express();
-const { PORT = 3001 } = process.env;
+const { PORT = 3000 } = process.env;
 
 const { DATABASE_URL } = process.env;
 
@@ -44,27 +44,18 @@ app.use(express.json());
 app.use(requestLogger);
 app.use(limiter);
 
-app.use("/users", userRouter);
-app.use("/articles", articlesRouter);
+app.use(routes);
 
 app.use(errorLogger);
 app.use(errors());
+app.use(errorHandler);
 
 mongoose
   .connect(DATABASE_URL)
   .then(() => {
-    console.log("✅ MongoDB Connected");
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    app.listen(PORT, () => {});
   })
-  .catch((err) => {
+  .catch(() => {
     console.error("❌  DB error:", err);
     process.exit(1);
   });
-
-app.use((err, req, res, next) => {
-  console.log(err);
-  const { statusCode = 500, message } = err;
-  res.status(statusCode).send({
-    message: statusCode === 500 ? "An error occurred on the server" : message,
-  });
-});
