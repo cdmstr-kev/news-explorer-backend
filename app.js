@@ -30,7 +30,7 @@ app.use(
       if (!origin) return callback(null, true);
       if (
         allowedOrigins.indexOf(origin) !== -1 ||
-        !process.env.NODE_ENV === "production"
+        process.env.NODE_ENV !== "production"
       ) {
         return callback(null, true);
       }
